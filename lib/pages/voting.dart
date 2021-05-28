@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:voting_app_mobile/http/vote_http.dart';
 
 class Vote extends StatefulWidget {
   @override
@@ -8,7 +9,9 @@ class Vote extends StatefulWidget {
 
 class _VoteState extends State<Vote> {
   int selectedCandidateIndex = -1;
-  List<String> candidates = ["Candidate 1", "Candidate 2", "Candidate 3"];
+
+  // List<String> candidates = ["Candidate 1", "Candidate 2", "Candidate 3"];
+  VoteHttp voteHttp = new VoteHttp();
 
   @override
   Widget build(BuildContext context) {
@@ -33,40 +36,55 @@ class _VoteState extends State<Vote> {
                 ),
               ),
               Container(
-                child:
-                    FutureBuilder<List<dynamic>>(builder: (context, snapshot) {
-                  return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: candidates.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                            shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(15)),
-                            elevation: 5,
-                            margin: const EdgeInsets.fromLTRB(15, 30, 15, 0),
-                            color: selectedCandidateIndex == index
-                                ? Colors.blue
-                                : Colors.red,
-                            child: ListTile(
-                              leading: Icon(Icons.person),
-                              title: Text(
-                                candidates[index],
-                                style: TextStyle(
-                                    fontWeight: selectedCandidateIndex == index
-                                        ? FontWeight.bold
-                                        : FontWeight.normal),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  selectedCandidateIndex == index
-                                      ? selectedCandidateIndex = -1
-                                      : selectedCandidateIndex = index;
-                                });
-                              },
-                            ));
-                      });
-                }),
+                child: FutureBuilder<Map<String, dynamic>>(
+                    future: voteHttp.getCandidates(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<String> candidates = [];
+
+                        for (var k in snapshot.data.keys) {
+                          candidates.add(snapshot.data[k]);
+                        }
+                        return ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: candidates.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                  shape: new RoundedRectangleBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(15)),
+                                  elevation: 5,
+                                  margin:
+                                      const EdgeInsets.fromLTRB(15, 30, 15, 0),
+                                  color: selectedCandidateIndex == index
+                                      ? Colors.blue
+                                      : Colors.red,
+                                  child: ListTile(
+                                    leading: Icon(Icons.person),
+                                    title: Text(
+                                      candidates[index],
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.white,
+                                          fontWeight:
+                                              selectedCandidateIndex == index
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        selectedCandidateIndex == index
+                                            ? selectedCandidateIndex = -1
+                                            : selectedCandidateIndex = index;
+                                      });
+                                    },
+                                  ));
+                            });
+                      } else {
+                        return Center();
+                      }
+                    }),
               ),
               SizedBox(
                 height: 5,
