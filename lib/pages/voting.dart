@@ -10,7 +10,6 @@ class Vote extends StatefulWidget {
   final String surname;
   final String hexValue;
 
-
   @override
   _VoteState createState() => _VoteState();
 }
@@ -28,12 +27,27 @@ class _VoteState extends State<Vote> {
           title: Text(widget.name + " " + widget.surname),
           centerTitle: true,
           backgroundColor: Colors.orangeAccent,
-          leading: IconButton(icon: Icon(Icons.exit_to_app), onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) => LoginStateless()),
+          leading: IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginStateless()),
                     (Route<dynamic> route) => false);
-          }),
+              }),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.how_to_vote_sharp),
+          onPressed: () {
+            VoteHttp voteHttp = new VoteHttp();
+            voteHttp.checkMyVote(widget.hexValue).then((response) {
+              if (response["status"] == "OK") {
+                _showAlertDialog(
+                    context, "Your vote: " + response["votedCandidate"]);
+              } else {
+                _showAlertDialog(context, response["reason"]);
+              }
+            });
+          },
         ),
         body: Center(
           child: Column(
@@ -106,7 +120,9 @@ class _VoteState extends State<Vote> {
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(10)),
                 height: 50,
-                color: selectedCandidateIndex != -1 ? Colors.green : Colors.black12,
+                color: selectedCandidateIndex != -1
+                    ? Colors.green
+                    : Colors.black12,
                 child: Text(
                   'Vote',
                   style: TextStyle(color: Colors.black87, fontSize: 20.0),
@@ -114,17 +130,21 @@ class _VoteState extends State<Vote> {
                 onPressed: () {
                   if (selectedCandidateIndex != -1) {
                     VoteHttp voteHttp = new VoteHttp();
-                    voteHttp.castVote(selectedCandidateIndex, widget.hexValue).then((response) {
+                    voteHttp
+                        .castVote(selectedCandidateIndex, widget.hexValue)
+                        .then((response) {
                       if (response["status"] == "OK") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(response["msg"],
-                                  style: TextStyle(fontSize: 20),)));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                          response["msg"],
+                          style: TextStyle(fontSize: 20),
+                        )));
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(response["reason"],
-                                  style: TextStyle(fontSize: 20),)));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                          response["reason"],
+                          style: TextStyle(fontSize: 20),
+                        )));
                       }
                     });
                   }
@@ -133,5 +153,30 @@ class _VoteState extends State<Vote> {
             ],
           ),
         ));
+  }
+
+  _showAlertDialog(BuildContext context, String content) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text("Your Vote",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              content: Text(content),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              actions: <Widget>[
+                new MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text(
+                      "OK",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ))
+              ]);
+        });
   }
 }

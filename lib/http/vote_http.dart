@@ -63,4 +63,27 @@ class VoteHttp {
       throw new Exception("Unsuccessful voting.");
     }
   }
+
+  /// Checks voter's vote
+  ///
+  /// @param from - String Voter's account address
+  /// @returns Response body
+  Future<Map<String, dynamic>> checkMyVote(String from) async {
+    http.Response response = await http.post(
+      Uri.http("10.0.2.2:8082", "/get/check-my-vote"),
+      headers: {"Content-type": "application/json"},
+      body: jsonEncode(<String, String> {
+        "from": from
+      })
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else if (response.statusCode == 404) {
+      return json.decode(response.body);
+    } else {
+      throw new Exception("Unsuccessful checking.");
+    }
+
+  }
 }
