@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:voting_app_mobile/http/vote_http.dart';
 
 class Vote extends StatefulWidget {
+  Vote({Key key, this.name, this.surname, this.hexValue}) : super(key: key);
+
+  final String name;
+  final String surname;
+  final String hexValue;
+
+
   @override
   _VoteState createState() => _VoteState();
 }
@@ -18,7 +25,7 @@ class _VoteState extends State<Vote> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Vote"),
+          title: Text(widget.name + " " + widget.surname),
           centerTitle: true,
           backgroundColor: Colors.orangeAccent,
         ),

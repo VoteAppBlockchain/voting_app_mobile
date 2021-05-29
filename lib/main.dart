@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:voting_app_mobile/pages/voting.dart';
+import 'package:voting_app_mobile/pages/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lime,
       ),
-      home: Vote(),
+      home: LoginStateless(),
       //MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
