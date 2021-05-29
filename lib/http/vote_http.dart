@@ -86,4 +86,26 @@ class VoteHttp {
     }
 
   }
+
+  /// Fetches the election results
+  ///
+  /// @param from - String Voters account address
+  /// @returns Response body
+  Future<Map<String, dynamic>> getElectionResults(String from) async {
+    http.Response response = await http.post(
+      Uri.http("10.0.2.2:8082", "/get/election-results"),
+      headers: {"Content-type": "application/json"},
+      body: jsonEncode(<String, String> {
+        "from": from
+      })
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else if (response.statusCode == 404) {
+      return json.decode(response.body);
+    } else {
+      throw new Exception("Unsuccessful result fetching!");
+    }
+  }
 }

@@ -34,17 +34,38 @@ class _VoteState extends State<Vote> {
                     MaterialPageRoute(builder: (context) => LoginStateless()),
                     (Route<dynamic> route) => false);
               }),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.bar_chart),
+              onPressed: () {
+                voteHttp.getElectionResults(widget.hexValue).then((response) {
+                  if (response["status"] == "OK") {
+                    String content = "";
+                    for (int i = 0; i < response["candidates"].length; i++) {
+                      content += response["candidates"][i] +
+                          ": " +
+                          response["voteCounts"][i] +
+                          "\n";
+                    }
+                    _showAlertDialog(context, "Election results", content);
+                  } else {
+                    _showAlertDialog(
+                        context, "Election results", response["reason"]);
+                  }
+                });
+              },
+            )
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.how_to_vote_sharp),
           onPressed: () {
-            VoteHttp voteHttp = new VoteHttp();
             voteHttp.checkMyVote(widget.hexValue).then((response) {
               if (response["status"] == "OK") {
-                _showAlertDialog(
-                    context, "Your vote: " + response["votedCandidate"]);
+                _showAlertDialog(context, "Your Vote",
+                    "Your vote: " + response["votedCandidate"]);
               } else {
-                _showAlertDialog(context, response["reason"]);
+                _showAlertDialog(context, "Your Vote", response["reason"]);
               }
             });
           },
@@ -129,7 +150,6 @@ class _VoteState extends State<Vote> {
                 ),
                 onPressed: () {
                   if (selectedCandidateIndex != -1) {
-                    VoteHttp voteHttp = new VoteHttp();
                     voteHttp
                         .castVote(selectedCandidateIndex, widget.hexValue)
                         .then((response) {
@@ -155,14 +175,16 @@ class _VoteState extends State<Vote> {
         ));
   }
 
-  _showAlertDialog(BuildContext context, String content) {
+  _showAlertDialog(BuildContext context, String title, String content) {
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text("Your Vote",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              content: Text(content),
+              title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+              content: Text(
+                content,
+                style: TextStyle(fontSize: 20),
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
