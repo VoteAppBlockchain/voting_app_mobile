@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voting_app_mobile/http/vote_http.dart';
+import 'package:voting_app_mobile/pages/login.dart';
 
 class Vote extends StatefulWidget {
   Vote({Key key, this.name, this.surname, this.hexValue}) : super(key: key);
@@ -17,7 +18,6 @@ class Vote extends StatefulWidget {
 class _VoteState extends State<Vote> {
   int selectedCandidateIndex = -1;
 
-  // List<String> candidates = ["Candidate 1", "Candidate 2", "Candidate 3"];
   VoteHttp voteHttp = new VoteHttp();
 
   @override
@@ -28,6 +28,12 @@ class _VoteState extends State<Vote> {
           title: Text(widget.name + " " + widget.surname),
           centerTitle: true,
           backgroundColor: Colors.orangeAccent,
+          leading: IconButton(icon: Icon(Icons.exit_to_app), onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => LoginStateless()),
+                    (Route<dynamic> route) => false);
+          }),
         ),
         body: Center(
           child: Column(
@@ -46,7 +52,6 @@ class _VoteState extends State<Vote> {
                 child: FutureBuilder<Map<String, dynamic>>(
                     future: voteHttp.getCandidates(),
                     builder: (context, snapshot) {
-                      print(widget.hexValue);
                       if (snapshot.hasData) {
                         List<String> candidates = [];
 
