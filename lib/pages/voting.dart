@@ -63,7 +63,7 @@ class _VoteState extends State<Vote> {
             voteHttp.checkMyVote(widget.hexValue).then((response) {
               if (response["status"] == "OK") {
                 _showAlertDialog(context, "Your Vote",
-                    "Your vote: " + response["votedCandidate"]);
+                    "You voted for: " + response["votedCandidate"]);
               } else {
                 _showAlertDialog(context, "Your Vote", response["reason"]);
               }

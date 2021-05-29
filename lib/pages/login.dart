@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:voting_app_mobile/pages/voting.dart';
 import 'package:voting_app_mobile/http/vote_http.dart';
@@ -148,8 +150,8 @@ class LoginState extends State<Login> {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                         builder: (context) => Vote(
-                              name: name,
-                              surname: surname,
+                              name: Utf8Decoder().convert(name.codeUnits),
+                              surname: Utf8Decoder().convert(surname.codeUnits),
                               hexValue: hexValue,
                             )),
                     (Route<dynamic> route) => false);
