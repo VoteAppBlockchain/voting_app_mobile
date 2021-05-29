@@ -39,4 +39,28 @@ class VoteHttp {
       throw new Exception("Unsuccessful login");
     }
   }
+
+  /// Cast the vote for selected candidate
+  ///
+  /// @param candidateNum - int Index of the selected candidate
+  /// @param from - String Voter's accound address
+  /// @return Response body
+  Future<Map<String, dynamic>> castVote(int candidateNum, String from) async {
+    http.Response response = await http.post(
+      Uri.http("10.0.2.2:8082", "/vote"),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(<String, String>{
+          "candidate": candidateNum.toString(),
+        "from": from
+        })
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else if (response.statusCode == 404) {
+      return json.decode(response.body);
+    } else {
+      throw new Exception("Unsuccessful voting.");
+    }
+  }
 }

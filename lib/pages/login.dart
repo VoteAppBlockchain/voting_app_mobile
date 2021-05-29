@@ -141,7 +141,7 @@ class LoginState extends State<Login> {
             VoteHttp voteHttp = new VoteHttp();
             voteHttp.login(idNumber, password).then((response) {
               if (response.length > 0) {
-                String hexValue = response[0]["hexValue"];
+                String hexValue = response[0]["hexvalue"];
                 String name = response[0]["name"];
                 String surname = response[0]["surname"];
 

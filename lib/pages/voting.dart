@@ -46,6 +46,7 @@ class _VoteState extends State<Vote> {
                 child: FutureBuilder<Map<String, dynamic>>(
                     future: voteHttp.getCandidates(),
                     builder: (context, snapshot) {
+                      print(widget.hexValue);
                       if (snapshot.hasData) {
                         List<String> candidates = [];
 
@@ -100,13 +101,28 @@ class _VoteState extends State<Vote> {
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(10)),
                 height: 50,
-                color: Colors.green,
+                color: selectedCandidateIndex != -1 ? Colors.green : Colors.black12,
                 child: Text(
                   'Vote',
                   style: TextStyle(color: Colors.black87, fontSize: 20.0),
                 ),
                 onPressed: () {
-                  // TODO Call vote function
+                  if (selectedCandidateIndex != -1) {
+                    VoteHttp voteHttp = new VoteHttp();
+                    voteHttp.castVote(selectedCandidateIndex, widget.hexValue).then((response) {
+                      if (response["status"] == "OK") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(response["msg"],
+                                  style: TextStyle(fontSize: 20),)));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(response["reason"],
+                                  style: TextStyle(fontSize: 20),)));
+                      }
+                    });
+                  }
                 },
               ),
             ],
